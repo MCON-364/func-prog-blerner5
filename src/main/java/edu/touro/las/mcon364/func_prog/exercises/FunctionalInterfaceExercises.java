@@ -2,10 +2,13 @@ package edu.touro.las.mcon364.func_prog.exercises;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Locale;
+import java.util.Random;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.random.RandomGenerator;
 
 /**
  * Functional Interface Practice
@@ -25,22 +28,23 @@ public class FunctionalInterfaceExercises {
     // PART 1 — SUPPLIERS
     // =========================================================
 
+
     /**
      * 1) Create a Supplier that returns the current year.
-     *
+     * <p>
      * Hint:
      * You can get the current date using:
-     *     LocalDate.now()
-     *
+     * LocalDate.now()
+     * <p>
      * Then extract the year using:
-     *     getYear()
-     *
+     * getYear()
+     * <p>
      * Example (not the solution):
      *
      */
     public static Supplier<Integer> currentYearSupplier() {
-      // TODO
-        return null;
+        Supplier<Integer> year = () -> LocalDate.now().getYear();
+        return year;
     }
 
     /**
@@ -48,8 +52,7 @@ public class FunctionalInterfaceExercises {
      * between 1 and 100.
      */
     public static Supplier<Integer> randomScoreSupplier() {
-        // TODO
-        return null;
+        return () -> new Random().nextInt(100) + 1;
     }
 
     // =========================================================
@@ -61,19 +64,20 @@ public class FunctionalInterfaceExercises {
      * a string is all uppercase.
      */
     public static Predicate<String> isAllUpperCase() {
-        // TODO
-        return null;
+        return str -> str.equals(str.toUpperCase());
     }
 
     /**
      * 4) Create a Predicate that checks whether
      * a number is positive AND divisible by 5.
-     *
+     * <p>
      * Hint: consider chaining.
      */
     public static Predicate<Integer> positiveAndDivisibleByFive() {
-        // TODO
-        return null;
+        Predicate<Integer> divisibleByFive = x -> x % 5 == 0;
+        Predicate<Integer> positive = x -> x > 0;
+        Predicate<Integer> positiveAndDivisibleByFive = divisibleByFive.and(positive);
+        return positiveAndDivisibleByFive;
     }
 
     // =========================================================
@@ -83,23 +87,31 @@ public class FunctionalInterfaceExercises {
     /**
      * 5) Create a Function that converts
      * a temperature in Celsius to Fahrenheit.
-     *
+     * <p>
      * Formula: F = C * 9/5 + 32
      */
     public static Function<Double, Double> celsiusToFahrenheit() {
-        // TODO
-        return null;
+        return conversion -> conversion * 9 / 5 + 32;
     }
 
     /**
      * 6) Create a Function that takes a String
      * and returns the number of vowels in it.
-     *
+     * <p>
      * Bonus: Make it case-insensitive.
      */
     public static Function<String, Integer> countVowels() {
-        // TODO
-        return null;
+        return str -> {
+            int sum = 0;
+            String strLowerCase = str.toLowerCase();
+            for (int ctr = 0; ctr < strLowerCase.length(); ctr++) {
+                if (strLowerCase.charAt(ctr) == 'a' || strLowerCase.charAt(ctr) == 'e' || strLowerCase.charAt(ctr) == 'i' || strLowerCase.charAt(ctr) == 'o' || strLowerCase.charAt(ctr) == 'u') {
+                    sum++;
+                }
+            }
+
+            return sum;
+        };
     }
 
     // =========================================================
@@ -109,13 +121,13 @@ public class FunctionalInterfaceExercises {
     /**
      * 7) Create a Consumer that prints a value
      * surrounded by "***"
-     *
+     * <p>
      * Example output:
      * *** Hello ***
      */
     public static Consumer<String> starPrinter() {
-        // TODO
-        return null;
+        Consumer<String> printStr = str -> System.out.println("*** " + str + " ***");
+        return printStr;
     }
 
     /**
@@ -123,8 +135,7 @@ public class FunctionalInterfaceExercises {
      * of an integer.
      */
     public static Consumer<Integer> printSquare() {
-        // TODO
-        return null;
+        return square -> System.out.println(square * square);
     }
 
     // =========================================================
@@ -133,29 +144,51 @@ public class FunctionalInterfaceExercises {
 
     /**
      * 9) Apply:
-     *  - A Predicate
-     *  - A Function
-     *  - A Consumer
-     *
+     * - A Predicate
+     * - A Function
+     * - A Consumer
+     * <p>
      * Process the list as follows:
-     *  - Keep only strings longer than 3 characters
-     *  - Convert them to lowercase
-     *  - Print them
+     * - Keep only strings longer than 3 characters
+     * - Convert them to lowercase
+     * - Print them
      */
     public static void processStrings(List<String> values) {
-        // TODO
+        Predicate<String> longerThanThree = str -> str.length() > 3;
+        Function<String, String> converter = str -> str.toLowerCase();
+        Consumer<String> print = str -> System.out.println(str);
+
+        for (int ctr = 0; ctr < values.size(); ctr++) {
+            if (longerThanThree.test(values.get(ctr))) {
+                String lowerCase = converter.apply(values.get(ctr));
+                print.accept(lowerCase);
+            }
+        }
+
     }
 
     /**
      * 10) Apply:
-     *  - A Supplier
-     *  - A Predicate
-     *  - A Consumer
-     *
+     * - A Supplier
+     * - A Predicate
+     * - A Consumer
+     * <p>
      * Generate 5 random scores.
      * Print only those above 70.
      */
     public static void generateAndFilterScores() {
-        // TODO
+        Supplier<Integer> generatedScore = () -> new Random().nextInt(100) + 1;
+        Predicate<Integer> above = score -> score > 70;
+        Consumer<Integer> printer = score -> System.out.println(score);
+
+        for (int ctr = 0; ctr < 5; ctr++) {
+            int score = generatedScore.get();
+            if (above.test(score)) {
+                printer.accept(score);
+            }
+        }
     }
+
 }
+
+
